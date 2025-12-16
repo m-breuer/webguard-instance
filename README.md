@@ -84,3 +84,4 @@ To run the queue worker, use the `php artisan queue:work` command. You will need
 
 ```bash
 php artisan queue:work --queue=default,monitoring-response,monitoring-ssl
+```
