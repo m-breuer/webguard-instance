@@ -12,8 +12,7 @@
         "php": "^8.4",
         "laravel/framework": "^12",
         "laravel/tinker": "^2.10",
-        "spatie/ssl-certificate": "^2.6",
-        "ext-redis": "*"
+        "spatie/ssl-certificate": "^2.6"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.16",
