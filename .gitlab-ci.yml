@@ -22,7 +22,7 @@ cache:
   image: php:8.4-cli
   before_script:
     - apt-get update && apt-get install -y git unzip zip libzip-dev libsqlite3-dev libxml2-dev libcurl4-openssl-dev
-    - docker-php-ext-install dom curl mbstring zip pcntl pdo sqlite pdo_sqlite pdo_mysql xml
+    - docker-php-ext-install dom curl mbstring zip pcntl pdo pdo_sqlite pdo_mysql xml
     - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
     - composer install --no-interaction --prefer-dist --optimize-autoloader
 
