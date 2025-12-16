@@ -1,0 +1,57 @@
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_COMMIT_BRANCH == 'main'
+
+stages:
+  - lint
+  - test
+
+variables:
+  COMPOSER_CACHE_DIR: "$CI_PROJECT_DIR/composer-cache"
+
+cache:
+  key:
+    files:
+      - composer.lock
+  paths:
+    - vendor/
+    - $COMPOSER_CACHE_DIR
+
+.base:
+  image: php:8.4-cli
+  before_script:
+    - apt-get update && apt-get install -y git unzip zip libzip-dev libsqlite3-dev libxml2-dev
+    - docker-php-ext-install dom curl libxml mbstring zip pcntl pdo pdo_sqlite xml tokenizer json
+    - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+    - composer install --no-interaction --prefer-dist --optimize-autoloader
+
+lint:
+  extends: .base
+  stage: lint
+  script:
+    - ./vendor/bin/rector process --ansi
+    - ./vendor/bin/pint
+    - |
+      if ! git diff --quiet; then
+        git config --global user.name "${GITLAB_USER_NAME}"
+        git config --global user.email "${GITLAB_USER_EMAIL}"
+        git remote set-url origin "https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
+        git checkout -B "${CI_COMMIT_REF_NAME}"
+        git commit -am "ci: auto-fixes from pint and rector"
+        git push origin "${CI_COMMIT_REF_NAME}"
+      fi
+  rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /ci: auto-fixes/'
+      when: never
+    - when: on_success
+
+test:
+  extends: .base
+  stage: test
+  script:
+    - php -r "file_exists('.env') || copy('.env.example', '.env');"
+    - php artisan key:generate
+    - chmod -R 777 storage bootstrap/cache
+    - php artisan test
+  needs: ["lint"]
