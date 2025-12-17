@@ -2,11 +2,11 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> 💡 **System Architecture Note:** This repository contains the **Worker Node**. It requires a running instance of the [WebGuard Core Application](https://github.com/m-breuer/webguard) to function effectively.
+> 💡 **System Architecture Note:** This repository contains the **Worker Node**. It requires a running instance of the [WebGuard Core Application](https://gitlab.com/marcelbreuer/webguard) to function effectively.
 
 This repository contains a WebGuard scraper instance, designed to operate as one of potentially many distributed crawling nodes for the WebGuard monitoring service. Its primary role is to perform the actual data collection for website uptime, response times, and SSL certificate statuses and send them to the core application via a REST API.
 
-This project is a component of the [WebGuard](https://github.com/m-breuer/webguard) project.
+This project is a component of the [WebGuard](https://gitlab.com/marcelbreuer/webguard) project.
 
 ## Features
 
@@ -40,13 +40,13 @@ The project is structured as a standard Laravel application, with a few key comp
 -   PHP 8.2 or higher
 -   Composer
 -   Redis server
--   A running instance of the [WebGuard Core](https://github.com/m-breuer/webguard) application.
+-   A running instance of the [WebGuard Core](https://gitlab.com/marcelbreuer/webguard) application.
 
 ### Installation
 
 1.  **Clone the repository:**
     ```bash
-    git clone [https://github.com/m-breuer/webguard-instance.git](https://github.com/m-breuer/webguard-instance.git)
+    git clone https://gitlab.com/marcelbreuer/webguard-instance.git
     cd webguard-instance
     ```
 2.  **Install dependencies:**
