@@ -31,7 +31,6 @@ return RectorConfig::configure()
         LaravelSetList::LARAVEL_FACTORIES,
         LaravelSetList::LARAVEL_LEGACY_FACTORIES_TO_CLASSES,
         LaravelSetList::LARAVEL_TESTING,
-        LaravelSetList::LARAVEL_TYPE_DECLARATIONS,
         LaravelSetList::LARAVEL_IF_HELPERS,
     ])
     ->withPreparedSets(
