@@ -10,6 +10,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.4",
+        "ext-redis": "*",
         "laravel/framework": "^12",
         "laravel/tinker": "^2.10",
         "spatie/ssl-certificate": "^2.6"
