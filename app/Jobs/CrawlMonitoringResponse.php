@@ -52,8 +52,6 @@ class CrawlMonitoringResponse implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param  stdClass  $monitoring  The monitoring instance to be crawled.
      */
     public function __construct(public stdClass $monitoring)
     {
@@ -77,10 +75,10 @@ class CrawlMonitoringResponse implements ShouldQueue
 
         try {
             $handler = match ($this->monitoring->type) {
-                MonitoringType::HTTP => fn () => $this->handleHttp(),
-                MonitoringType::PING => fn () => $this->handlePing(),
-                MonitoringType::KEYWORD => fn () => $this->handleKeyword(),
-                MonitoringType::PORT => fn () => $this->handlePort(),
+                MonitoringType::HTTP => fn() => $this->handleHttp(),
+                MonitoringType::PING => fn() => $this->handlePing(),
+                MonitoringType::KEYWORD => fn() => $this->handleKeyword(),
+                MonitoringType::PORT => fn() => $this->handlePort(),
             };
 
             $handler();
@@ -233,7 +231,7 @@ class CrawlMonitoringResponse implements ShouldQueue
 
             return $request->$method($this->monitoring->target, $body);
         } catch (Throwable $throwable) {
-            Log::error(sprintf('HTTP request failed for %s: ', $this->monitoring->target).$throwable->getMessage());
+            Log::error(sprintf('HTTP request failed for %s: ', $this->monitoring->target) . $throwable->getMessage());
 
             return null;
         }
@@ -243,7 +241,7 @@ class CrawlMonitoringResponse implements ShouldQueue
     {
         Http::withHeaders([
             'X-API-KEY' => config('webguard.webguard_core_api_key'),
-        ])->post(config('webguard.webguard_core_api_url').'/api/v1/internal/monitoring-responses', [
+        ])->post(config('webguard.webguard_core_api_url') . '/api/v1/internal/monitoring-responses', [
             'monitoring_id' => $this->monitoring->id,
             'status' => $this->monitoringStatus,
             'response_time' => $this->responseTime,
