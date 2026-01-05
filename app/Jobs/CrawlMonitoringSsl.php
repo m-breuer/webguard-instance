@@ -2,18 +2,18 @@
 
 namespace App\Jobs;
 
-use App\Enums\MonitoringType;
-use DateTimeInterface;
+use stdClass;
 use Exception;
+use DateTimeInterface;
+use App\Enums\MonitoringType;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Spatie\SslCertificate\SslCertificate;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
-use Spatie\SslCertificate\SslCertificate;
-use stdClass;
 
 /**
  * Crawls a monitoring target to check its SSL certificate status.
@@ -57,8 +57,6 @@ class CrawlMonitoringSsl implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param  stdClass  $monitoring  The monitoring instance to be checked.
      */
     public function __construct(public stdClass $monitoring)
     {
@@ -80,7 +78,7 @@ class CrawlMonitoringSsl implements ShouldQueue
                 $this->issuedAt = $certificate->validFromDate();
             }
         } catch (Exception $exception) {
-            Log::error('Error checking SSL certificate: '.$exception->getMessage());
+            Log::error('Error checking SSL certificate: ' . $exception->getMessage());
         }
 
         $this->sendSsl();
@@ -90,7 +88,7 @@ class CrawlMonitoringSsl implements ShouldQueue
     {
         Http::withHeaders([
             'X-API-KEY' => config('webguard.webguard_core_api_key'),
-        ])->post(config('webguard.webguard_core_api_url').'/api/v1/internal/ssl-results', [
+        ])->post(config('webguard.webguard_core_api_url') . '/api/v1/internal/ssl-results', [
             'monitoring_id' => $this->monitoring->id,
             'is_valid' => $this->valid,
             'expires_at' => $this->expiresAt,

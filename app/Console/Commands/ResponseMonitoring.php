@@ -2,9 +2,13 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\MonitoringStatus;
+use App\Enums\MonitoringType;
 use App\Jobs\CrawlMonitoringResponse;
+use App\Jobs\SendMonitoringResult;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class ResponseMonitoring extends Command
 {
@@ -33,7 +37,7 @@ class ResponseMonitoring extends Command
 
         $response = Http::withHeaders([
             'X-API-KEY' => config('webguard.webguard_core_api_key'),
-        ])->get(config('webguard.webguard_core_api_url').'/api/v1/internal/monitorings', [
+        ])->get(config('webguard.webguard_core_api_url') . '/api/v1/internal/monitorings', [
             'location' => $location,
         ]);
 
@@ -56,9 +60,24 @@ class ResponseMonitoring extends Command
 
         foreach ($monitorings as $monitoring) {
             $monitoring = (object) $monitoring;
-            dispatch(new CrawlMonitoringResponse($monitoring))->onQueue('monitoring-response');
 
-            $this->info('Dispatched response monitoring: '.$monitoring->name);
+            $this->info('Processing monitoring: ' . $monitoring->name);
+
+            if (isset($monitoring->maintenance_active) && $monitoring->maintenance_active) {
+                $this->info('Skipping response monitoring due to active maintenance: ' . $monitoring->name);
+
+                Http::withHeaders([
+                    'X-API-KEY' => config('webguard.webguard_core_api_key'),
+                ])->post(config('webguard.webguard_core_api_url') . '/api/v1/internal/monitoring-responses', [
+                    'monitoring_id' => $monitoring->id,
+                    'status' => MonitoringStatus::UNKNOWN,
+                ]);
+            } else {
+                $this->info('Dispatched response monitoring: ' . $monitoring->name);
+
+                dispatch(new CrawlMonitoringResponse($monitoring))->onQueue('monitoring-response');
+            }
+
             $this->output->progressAdvance();
         }
 
