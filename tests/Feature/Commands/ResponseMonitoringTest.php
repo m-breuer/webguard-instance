@@ -16,8 +16,10 @@ class ResponseMonitoringTest extends TestCase
     {
         Bus::fake();
 
+        config(['webguard.webguard_core_api_url' => 'http://api.test']);
+
         Http::fake([
-            config('webguard.webguard_core_api_url') . '/*' => Http::response([
+            config('webguard.webguard_core_api_url') . '/api/v1/internal/monitorings*' => Http::response([
                 [
                     'id' => 1,
                     'name' => 'Test Monitoring',
@@ -39,6 +41,8 @@ class ResponseMonitoringTest extends TestCase
     public function test_dispatches_send_result_job_for_monitoring_in_maintenance()
     {
         Bus::fake();
+
+        config(['webguard.webguard_core_api_url' => 'http://api.test']);
 
         Http::fake([
             config('webguard.webguard_core_api_url') . '/api/v1/internal/monitorings*' => Http::response([
@@ -70,8 +74,10 @@ class ResponseMonitoringTest extends TestCase
     {
         Bus::fake();
 
+        config(['webguard.webguard_core_api_url' => 'http://api.test']);
+
         Http::fake([
-            config('webguard.webguard_core_api_url') . '/*' => Http::response([]),
+            config('webguard.webguard_core_api_url') . '/api/v1/internal/monitorings*' => Http::response([]),
         ]);
 
         $this->artisan('monitoring:response')
