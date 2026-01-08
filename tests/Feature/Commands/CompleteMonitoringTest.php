@@ -10,7 +10,7 @@ class CompleteMonitoringTest extends TestCase
     public function test_calls_response_and_ssl_monitoring_commands()
     {
         Http::fake([
-            config('webguard.webguard_core_api_url').'/*' => Http::response([]),
+            config('webguard.webguard_core_api_url') . '/*' => Http::response([]),
         ]);
 
         $this->artisan('monitoring:complete')

@@ -2,18 +2,18 @@
 
 namespace App\Jobs;
 
-use stdClass;
-use Exception;
-use DateTimeInterface;
 use App\Enums\MonitoringType;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Spatie\SslCertificate\SslCertificate;
-use Illuminate\Foundation\Queue\Queueable;
+use DateTimeInterface;
+use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Spatie\SslCertificate\SslCertificate;
+use stdClass;
 
 /**
  * Crawls a monitoring target to check its SSL certificate status.

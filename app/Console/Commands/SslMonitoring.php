@@ -2,13 +2,10 @@
 
 namespace App\Console\Commands;
 
-use App\Enums\MonitoringStatus;
 use App\Enums\MonitoringType;
 use App\Jobs\CrawlMonitoringSsl;
-use App\Jobs\SendSslResult;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 class SslMonitoring extends Command
 {
@@ -36,7 +33,7 @@ class SslMonitoring extends Command
         $location = config('webguard.location');
 
         $monitoringTypes = collect(MonitoringType::values())
-            ->reject(fn(string $type) => $type === MonitoringType::PING->value)
+            ->reject(fn (string $type) => $type === MonitoringType::PING->value)
             ->implode(',');
 
         $response = Http::withHeaders([
@@ -60,6 +57,8 @@ class SslMonitoring extends Command
 
             return Command::SUCCESS;
         }
+
+        $this->output->progressStart(count($monitorings));
 
         foreach ($monitorings as $monitoring) {
             $monitoring = (object) $monitoring;

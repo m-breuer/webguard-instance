@@ -11,13 +11,13 @@ return RectorConfig::configure()
     ->withSetProviders(LaravelSetProvider::class)
     ->withComposerBased(laravel: true)
     ->withPaths([
-        __DIR__.'/app',
-        __DIR__.'/bootstrap',
-        __DIR__.'/config',
-        __DIR__.'/public',
-        __DIR__.'/resources',
-        __DIR__.'/routes',
-        __DIR__.'/tests',
+        __DIR__ . '/app',
+        __DIR__ . '/bootstrap',
+        __DIR__ . '/config',
+        __DIR__ . '/public',
+        __DIR__ . '/resources',
+        __DIR__ . '/routes',
+        __DIR__ . '/tests',
     ])
     ->withSets([
         LaravelLevelSetList::UP_TO_LARAVEL_120,

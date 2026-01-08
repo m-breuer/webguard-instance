@@ -2,9 +2,7 @@
 
 namespace Tests\Feature\Commands;
 
-use App\Enums\MonitoringStatus;
 use App\Jobs\CrawlMonitoringSsl;
-use App\Jobs\SendSslResult;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -16,7 +14,7 @@ class SslMonitoringTest extends TestCase
         Bus::fake();
 
         Http::fake([
-            config('webguard.webguard_core_api_url').'/*' => Http::response([
+            config('webguard.webguard_core_api_url') . '/*' => Http::response([
                 [
                     'id' => 1,
                     'name' => 'Test Monitoring',
@@ -33,15 +31,14 @@ class SslMonitoringTest extends TestCase
             ->assertExitCode(0);
 
         Bus::assertDispatched(CrawlMonitoringSsl::class);
-        Bus::assertNotDispatched(SendSslResult::class);
     }
 
-    public function test_dispatches_send_result_job_for_monitoring_in_maintenance()
+    public function test_skips_job_for_monitoring_in_maintenance()
     {
         Bus::fake();
 
         Http::fake([
-            config('webguard.webguard_core_api_url').'/*' => Http::response([
+            config('webguard.webguard_core_api_url') . '/*' => Http::response([
                 [
                     'id' => 1,
                     'name' => 'Test Monitoring',
@@ -56,11 +53,6 @@ class SslMonitoringTest extends TestCase
             ->expectsOutput('SSL monitoring jobs dispatched successfully.')
             ->assertExitCode(0);
 
-        Bus::assertDispatched(function (SendSslResult $job) {
-            return $job->monitoringId === 1 &&
-                   $job->status === MonitoringStatus::UNKNOWN &&
-                   $job->skippedReason === 'maintenance';
-        });
         Bus::assertNotDispatched(CrawlMonitoringSsl::class);
     }
 
@@ -69,7 +61,7 @@ class SslMonitoringTest extends TestCase
         Bus::fake();
 
         Http::fake([
-            config('webguard.webguard_core_api_url').'/*' => Http::response([]),
+            config('webguard.webguard_core_api_url') . '/*' => Http::response([]),
         ]);
 
         $this->artisan('monitoring:ssl')

@@ -75,10 +75,10 @@ class CrawlMonitoringResponse implements ShouldQueue
 
         try {
             $handler = match ($this->monitoring->type) {
-                MonitoringType::HTTP => fn() => $this->handleHttp(),
-                MonitoringType::PING => fn() => $this->handlePing(),
-                MonitoringType::KEYWORD => fn() => $this->handleKeyword(),
-                MonitoringType::PORT => fn() => $this->handlePort(),
+                MonitoringType::HTTP => fn () => $this->handleHttp(),
+                MonitoringType::PING => fn () => $this->handlePing(),
+                MonitoringType::KEYWORD => fn () => $this->handleKeyword(),
+                MonitoringType::PORT => fn () => $this->handlePort(),
             };
 
             $handler();

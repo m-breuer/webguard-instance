@@ -2,14 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Enums\MonitoringStatus;
-use App\Enums\MonitoringType;
-use App\Jobs\CrawlMonitoringResponse;
-use App\Jobs\CrawlMonitoringSsl;
-use App\Jobs\SendMonitoringResult;
-use App\Jobs\SendSslResult;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Http;
 
 class CompleteMonitoring extends Command
 {

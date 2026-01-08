@@ -4,7 +4,6 @@ namespace Tests\Feature\Commands;
 
 use App\Enums\MonitoringStatus;
 use App\Jobs\CrawlMonitoringResponse;
-use App\Jobs\SendMonitoringResult;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -16,7 +15,7 @@ class ResponseMonitoringTest extends TestCase
         Bus::fake();
 
         Http::fake([
-            config('webguard.webguard_core_api_url').'/*' => Http::response([
+            config('webguard.webguard_core_api_url') . '/*' => Http::response([
                 [
                     'id' => 1,
                     'name' => 'Test Monitoring',
@@ -33,7 +32,6 @@ class ResponseMonitoringTest extends TestCase
             ->assertExitCode(0);
 
         Bus::assertDispatched(CrawlMonitoringResponse::class);
-        Bus::assertNotDispatched(SendMonitoringResult::class);
     }
 
     public function test_dispatches_send_result_job_for_monitoring_in_maintenance()
@@ -41,13 +39,14 @@ class ResponseMonitoringTest extends TestCase
         Bus::fake();
 
         Http::fake([
-            config('webguard.webguard_core_api_url').'/*' => Http::response([
+            config('webguard.webguard_core_api_url') . '/api/v1/internal/monitorings*' => Http::response([
                 [
                     'id' => 1,
                     'name' => 'Test Monitoring',
                     'maintenance_active' => true,
                 ],
             ]),
+            config('webguard.webguard_core_api_url') . '/api/v1/internal/monitoring-responses' => Http::response(),
         ]);
 
         $this->artisan('monitoring:response')
@@ -56,11 +55,12 @@ class ResponseMonitoringTest extends TestCase
             ->expectsOutput('Response monitoring jobs dispatched successfully.')
             ->assertExitCode(0);
 
-        Bus::assertDispatched(function (SendMonitoringResult $job) {
-            return $job->monitoringId === 1 &&
-                   $job->status === MonitoringStatus::UNKNOWN &&
-                   $job->skippedReason === 'maintenance';
+        Http::assertSent(function ($request) {
+            return $request->url() === config('webguard.webguard_core_api_url') . '/api/v1/internal/monitoring-responses' &&
+                   $request['monitoring_id'] === 1 &&
+                   $request['status'] === MonitoringStatus::UNKNOWN;
         });
+
         Bus::assertNotDispatched(CrawlMonitoringResponse::class);
     }
 
@@ -69,7 +69,7 @@ class ResponseMonitoringTest extends TestCase
         Bus::fake();
 
         Http::fake([
-            config('webguard.webguard_core_api_url').'/*' => Http::response([]),
+            config('webguard.webguard_core_api_url') . '/*' => Http::response([]),
         ]);
 
         $this->artisan('monitoring:response')
