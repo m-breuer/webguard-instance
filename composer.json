@@ -16,7 +16,6 @@
         "spatie/ssl-certificate": "^2.6"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.16",
         "driftingly/rector-laravel": "^2.1",
         "fakerphp/faker": "^1.23",
         "laravel/pail": "^1.2.2",
