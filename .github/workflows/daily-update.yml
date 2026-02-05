@@ -38,6 +38,11 @@ jobs:
         composer validate --strict
         composer update --no-interaction --prefer-dist --optimize-autoloader
 
+    - name: Run Rector & Pint
+      run: |
+        ./vendor/bin/rector process --ansi
+        ./vendor/bin/pint
+
     - name: Commit and push changes
       run: |
         git config user.name 'github-actions[bot]'
