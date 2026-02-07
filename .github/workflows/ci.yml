@@ -1,0 +1,86 @@
+name: CI
+
+on:
+  pull_request:
+
+
+jobs:
+  auto-fixes:
+    name: "Auto-Fixes (Pint & Rector)"
+    if: "!contains(github.event.head_commit.message, 'ci: auto-fixes')"
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.4'
+        extensions: mbstring, pdo_mysql, curl, intl, gd, zip, bz2, opcache, xdebug, gmp, ldap, pdo_sqlite, sqlite3, pspell, snmp, tidy
+        coverage: xdebug
+        tools: composer
+
+    - name: Cache Composer dependencies
+      uses: actions/cache@v4
+      with:
+        path: vendor
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-composer-
+
+    - name: Install dependencies
+      run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+    - name: Run Rector
+      run: ./vendor/bin/rector process --ansi
+
+    - name: Run Pint
+      run: ./vendor/bin/pint
+
+    - name: Commit changes
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: 'ci: auto-fixes from pint and rector'
+        commit_options: '--no-verify'
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.4'
+        extensions: mbstring, pdo_mysql, curl, intl, gd, zip, bz2, opcache, xdebug, gmp, ldap, pdo_sqlite, sqlite3, pspell, snmp, tidy
+        coverage: xdebug
+
+    - name: Cache Composer dependencies
+      uses: actions/cache@v4
+      with:
+        path: vendor
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-composer-
+
+    - name: Install Dependencies
+      run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+    - name: Prepare Environment
+      run: |
+        cp .env.testing .env
+        php artisan key:generate
+
+    - name: Set permissions
+      run: chmod -R 777 storage bootstrap/cache
+
+    - name: Run tests
+      env:
+        DB_CONNECTION: sqlite
+        DB_DATABASE: ':memory:'
+      run: |
+        php artisan migrate --force
+        php artisan db:seed --force
+        php artisan test

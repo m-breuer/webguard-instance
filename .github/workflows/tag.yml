@@ -2,10 +2,9 @@ name: Tag
 
 on:
   workflow_run:
-    workflows: ["Lint"]
-    branches: [main]
+        workflows: ["CI"]
     types:
-      - completed
+    - completed
 
 permissions:
   contents: write
@@ -14,17 +13,15 @@ jobs:
   create-tag:
     name: "Create Tag"
     if: >
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.event == 'push' &&
-      github.event.workflow_run.head_branch == 'main'
+      github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == 'main'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Create tag
-        uses: mathieudutour/github-tag-action@v6.1
-        id: tag_version
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          default_bump: "patch"
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Create tag
+      uses: mathieudutour/github-tag-action@v6.1
+      id: tag_version
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        default_bump: "patch"
