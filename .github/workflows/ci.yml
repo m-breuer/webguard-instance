@@ -18,7 +18,6 @@ jobs:
       with:
         php-version: '8.4'
         extensions: mbstring, pdo_mysql, curl, intl, gd, zip, bz2, opcache, xdebug, gmp, ldap, pdo_sqlite, sqlite3, pspell, snmp, tidy
-        coverage: xdebug
         tools: composer
 
     - name: Cache Composer dependencies
@@ -68,19 +67,9 @@ jobs:
     - name: Install Dependencies
       run: composer install --no-progress --prefer-dist --optimize-autoloader
 
-    - name: Prepare Environment
-      run: |
-        cp .env.testing .env
-        php artisan key:generate
-
-    - name: Set permissions
-      run: chmod -R 777 storage bootstrap/cache
-
     - name: Run tests
       env:
         DB_CONNECTION: sqlite
         DB_DATABASE: ':memory:'
       run: |
-        php artisan migrate --force
-        php artisan db:seed --force
         php artisan test
