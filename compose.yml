@@ -83,8 +83,6 @@ services:
     command: php artisan queue:work --queue=monitoring-response --sleep=1 --tries=1 --max-time=3600
     # Gracefully stop the container on SIGTERM
     stop_signal: SIGTERM
-    deploy:
-      replicas: 4
     env_file:
       - .env
     depends_on:
@@ -109,8 +107,6 @@ services:
     command: php artisan queue:work --queue=monitoring-ssl --sleep=1 --tries=1 --max-time=3600
     # Gracefully stop the container on SIGTERM
     stop_signal: SIGTERM
-    deploy:
-      replicas: 4
     env_file:
       - .env
     depends_on:
