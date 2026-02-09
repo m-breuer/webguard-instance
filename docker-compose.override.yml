@@ -9,10 +9,4 @@ services:
       APP_ENV: local
       AUTORUN_DEBUG: "true"
 
-  queue-monitoring-response:
-    deploy:
-      replicas: 1
 
-  queue-monitoring-ssl:
-    deploy:
-      replicas: 1
