@@ -42,9 +42,12 @@ FROM base AS app_build
 # Install Composer
 USER root
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-COPY . /app
+USER www-data
+
 WORKDIR /app
+COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader
+COPY . .
 
 FROM base AS production
 COPY --from=app_build --chown=www-data:www-data /app /var/www/html
