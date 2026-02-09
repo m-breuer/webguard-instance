@@ -42,7 +42,7 @@ FROM base AS app_build
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY . /app
 WORKDIR /app
-RUN composer install --no-dev --optimize-autoloader
+RUN which composer && php -v && composer install --no-dev --optimize-autoloader -vvv
 
 FROM base AS production
 COPY --from=app_build --chown=www-data:www-data /app /var/www/html
