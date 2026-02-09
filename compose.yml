@@ -3,8 +3,12 @@ services:
     build:
       context: .
       target: production
-    image: serversideup/php:8.5-fpm-nginx
+    image: serversideup/php:8.5-frankenphp
     environment:
+      # SSL configuration settings
+      CADDY_AUTO_HTTPS: "on"
+      CADDY_HTTPS_SERVER_ADDRESS: ${APP_URL}
+      SSL_MODE: "full"
       # PHP configuration settings
       PHP_MEMORY_LIMIT: "512M"
       PHP_UPLOAD_MAX_FILE_SIZE: "100M"
@@ -13,10 +17,12 @@ services:
       # Auto runs migrations, seeders, and optimizes the application on container start
       AUTORUN_ENABLED: "true"
     ports:
-      - "80:8080"
-      - "443:8443"
+      - 80:8080
+      - 443:8443
     volumes:
       - ./:/var/www/html
+      - config:/config
+      - data:/data
     env_file:
       - .env
     depends_on:
@@ -138,4 +144,8 @@ services:
 
 volumes:
   mysql_data:
+    driver: local
+  config:
+    driver: local
+  data:
     driver: local

@@ -6,9 +6,9 @@
 # https://serversideup.net/open-source/docker-php/
 FROM serversideup/php:8.5-fpm-nginx AS base
 
-## Uncomment if you need to install additional PHP extensions
-# USER root
-# RUN install-php-extensions bcmath gd
+# Additional PHP extensions
+USER root
+RUN install-php-extensions bcmath gd
 
 ############################################
 # Development Image
