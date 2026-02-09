@@ -39,7 +39,14 @@ USER root
 # Production Image
 ############################################
 FROM base AS app_build
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# Install Composer
+USER root
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        composer \
+    && rm -rf /var/lib/apt/lists/*
+USER www-data
+
 COPY . /app
 WORKDIR /app
 RUN which composer && php -v && composer install --no-dev --optimize-autoloader -vvv
