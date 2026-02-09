@@ -1,0 +1,17 @@
+services:
+  php:
+    build:
+      context: .
+      target: development
+    volumes:
+      - ./:/var/www/html # Mount local code for development
+    environment:
+      APP_ENV: local # Set APP_ENV for runtime
+
+  queue-monitoring-response:
+    deploy:
+      replicas: 1
+
+  queue-monitoring-ssl:
+    deploy:
+      replicas: 1

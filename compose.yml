@@ -1,0 +1,145 @@
+services:
+  php:
+    build:
+      context: .
+      target: production
+    image: serversideup/php:8.5-fpm-nginx
+    environment:
+      # PHP configuration settings
+      PHP_MEMORY_LIMIT: "512M"
+      PHP_UPLOAD_MAX_FILE_SIZE: "100M"
+      PHP_MAX_EXECUTION_TIME: "300"
+      PHP_OPCACHE_ENABLE: "1"
+      # Auto runs migrations, seeders, and optimizes the application on container start
+      AUTORUN_ENABLED: "true"
+    ports:
+      - "80:8080"
+      - "443:8443"
+    volumes:
+      - ./:/var/www/html
+    env_file:
+      - .env
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  schedule:
+    image: serversideup/php:8.5-cli
+    environment:
+      # PHP configuration settings for the schedule worker
+      PHP_MEMORY_LIMIT: "2048M"
+      PHP_UPLOAD_MAX_FILE_SIZE: "100M"
+      PHP_MAX_EXECUTION_TIME: "3600"
+      # Auto runs the Laravel scheduler on container start
+      AUTORUN_ENABLED: "false"
+    command: php artisan schedule:work --verbose --no-interaction
+    # Gracefully stop the container on SIGTERM
+    stop_signal: SIGTERM
+    env_file:
+      - .env
+    depends_on:
+      mysql:
+        condition: service_healthy
+      # Healthcheck to ensure the scheduler is running properly
+    healthcheck:
+      test: ["CMD", "healthcheck-schedule"]
+      start_period: 10s
+    volumes:
+      - ./:/var/www/html
+
+  queue-default:
+    image: serversideup/php:8.5-cli
+    environment:
+      # PHP configuration settings for the queue worker
+      PHP_MEMORY_LIMIT: "2048M"
+      PHP_UPLOAD_MAX_FILE_SIZE: "100M"
+      PHP_MAX_EXECUTION_TIME: "3600"
+      # Auto runs the Laravel queue worker on container start
+      AUTORUN_ENABLED: "false"
+    command: php artisan queue:work --queue=default --sleep=1 --tries=1 --max-time=3600
+    # Gracefully stop the container on SIGTERM
+    stop_signal: SIGTERM
+    env_file:
+      - .env
+    depends_on:
+      mysql:
+        condition: service_healthy
+    # Healthcheck to ensure the queue worker is running properly
+    healthcheck:
+      test: ["CMD", "healthcheck-queue"]
+      start_period: 10s
+    volumes:
+      - ./:/var/www/html
+
+  queue-monitoring-response:
+    image: serversideup/php:8.5-cli
+    environment:
+      # PHP configuration settings for the queue worker
+      PHP_MEMORY_LIMIT: "2048M"
+      PHP_UPLOAD_MAX_FILE_SIZE: "100M"
+      PHP_MAX_EXECUTION_TIME: "3600"
+      # Auto runs the Laravel queue worker on container start
+      AUTORUN_ENABLED: "false"
+    command: php artisan queue:work --queue=monitoring-response --sleep=1 --tries=1 --max-time=3600
+    # Gracefully stop the container on SIGTERM
+    stop_signal: SIGTERM
+    deploy:
+      replicas: 4
+    env_file:
+      - .env
+    depends_on:
+      mysql:
+        condition: service_healthy
+    # Healthcheck to ensure the queue worker is running properly
+    healthcheck:
+      test: ["CMD", "healthcheck-queue"]
+      start_period: 10s
+    volumes:
+      - ./:/var/www/html
+
+  queue-monitoring-ssl:
+    image: serversideup/php:8.5-cli
+    environment:
+      # PHP configuration settings for the queue worker
+      PHP_MEMORY_LIMIT: "2048M"
+      PHP_UPLOAD_MAX_FILE_SIZE: "100M"
+      PHP_MAX_EXECUTION_TIME: "3600"
+      # Auto runs the Laravel queue worker on container start
+      AUTORUN_ENABLED: "false"
+    command: php artisan queue:work --queue=monitoring-ssl --sleep=1 --tries=1 --max-time=3600
+    # Gracefully stop the container on SIGTERM
+    stop_signal: SIGTERM
+    deploy:
+      replicas: 4
+    env_file:
+      - .env
+    depends_on:
+      mysql:
+        condition: service_healthy
+    # Healthcheck to ensure the queue worker is running properly
+    healthcheck:
+      test: ["CMD", "healthcheck-queue"]
+      start_period: 10s
+    volumes:
+      - ./:/var/www/html
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mysql_data:
+    driver: local
