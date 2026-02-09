@@ -6,7 +6,8 @@ services:
     volumes:
       - ./:/var/www/html # Mount local code for development
     environment:
-      APP_ENV: local # Set APP_ENV for runtime
+      APP_ENV: local
+      AUTORUN_DEBUG: "true"
 
   queue-monitoring-response:
     deploy:

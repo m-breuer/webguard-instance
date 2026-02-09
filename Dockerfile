@@ -41,15 +41,10 @@ USER root
 FROM base AS app_build
 # Install Composer
 USER root
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        composer \
-    && rm -rf /var/lib/apt/lists/*
-USER www-data
-
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY . /app
 WORKDIR /app
-RUN which composer && php -v && composer install --no-dev --optimize-autoloader -vvv
+RUN composer install --no-dev --optimize-autoloader
 
 FROM base AS production
 COPY --from=app_build --chown=www-data:www-data /app /var/www/html
