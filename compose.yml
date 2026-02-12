@@ -31,7 +31,9 @@ services:
         condition: service_healthy
 
   schedule:
-    image: serversideup/php:8.5-frankenphp
+    build:
+      context: .
+      target: worker
     environment:
       # PHP configuration settings for the schedule worker
       PHP_MEMORY_LIMIT: "2048M"
@@ -53,7 +55,11 @@ services:
       start_period: 10s
 
   queue-default:
-    image: serversideup/php:8.5-frankenphp
+    build:
+      context: .
+      target: worker
+    deploy:
+      replicas: 1
     environment:
       # PHP configuration settings for the queue worker
       PHP_MEMORY_LIMIT: "2048M"
@@ -75,7 +81,11 @@ services:
       start_period: 10s
 
   queue-monitoring-response:
-    image: serversideup/php:8.5-frankenphp
+    build:
+      context: .
+      target: worker
+    deploy:
+      replicas: 4
     environment:
       # PHP configuration settings for the queue worker
       PHP_MEMORY_LIMIT: "2048M"
@@ -97,7 +107,11 @@ services:
       start_period: 10s
 
   queue-monitoring-ssl:
-    image: serversideup/php:8.5-frankenphp
+    build:
+      context: .
+      target: worker
+    deploy:
+      replicas: 4
     environment:
       # PHP configuration settings for the queue worker
       PHP_MEMORY_LIMIT: "2048M"

@@ -53,3 +53,13 @@ FROM base AS production
 COPY --from=app_build --chown=www-data:www-data /app /var/www/html
 USER www-data
 WORKDIR /var/www/html
+
+############################################
+# Production Worker Image
+############################################
+FROM serversideup/php:8.5-cli AS worker
+USER root
+# Copy application code from the build stage
+COPY --from=app_build --chown=www-data:www-data /app /var/www/html
+USER www-data
+WORKDIR /var/www/html
