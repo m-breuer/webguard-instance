@@ -8,7 +8,7 @@ FROM serversideup/php:8.5-fpm-nginx AS base
 
 # Additional PHP extensions
 USER root
-RUN install-php-extensions bcmath gd
+RUN install-php-extensions bcmath gd intl
 
 ############################################
 # Development Image
@@ -53,4 +53,3 @@ FROM base AS production
 COPY --from=app_build --chown=www-data:www-data /app /var/www/html
 USER www-data
 WORKDIR /var/www/html
-RUN php artisan optimize

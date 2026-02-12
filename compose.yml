@@ -8,7 +8,8 @@ services:
       # SSL configuration settings
       CADDY_AUTO_HTTPS: "on"
       CADDY_HTTPS_SERVER_ADDRESS: ${APP_URL}
-      SSL_MODE: "full"
+      SERVER_NAME: ${APP_URL}
+      SSL_MODE: "mixed"
       # PHP configuration settings
       PHP_MEMORY_LIMIT: "512M"
       PHP_UPLOAD_MAX_FILE_SIZE: "100M"
@@ -16,6 +17,10 @@ services:
       PHP_OPCACHE_ENABLE: "1"
       # Auto runs migrations, seeders, and optimizes the application on container start
       AUTORUN_ENABLED: "true"
+      AUTORUN_LARAVEL_MIGRATE: "true"
+      AUTORUN_LARAVEL_MIGRATION_FORCE: "true"
+      AUTORUN_LARAVEL_OPTIMIZE: "true"
+      AUTORUN_LARAVEL_STORAGE_LINK: "true"
     ports:
       - 80:8080
       - 443:8443
