@@ -2,11 +2,11 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> 💡 **System Architecture Note:** This repository contains the **Worker Node**. It requires a running instance of the [WebGuard Core Application](https://gitlab.com/marcelbreuer/webguard) to function effectively.
+> 💡 **System Architecture Note:** This repository contains the **Worker Node**. It requires a running instance of the [WebGuard Core Application](https://gitlab.com/m-breuer/webguard) to function effectively.
 
 This repository contains a WebGuard scraper instance, designed to operate as one of potentially many distributed crawling nodes for the WebGuard monitoring service. Its primary role is to perform the actual data collection for website uptime, response times, and SSL certificate statuses and send them to the core application via a REST API.
 
-This project is a component of the [WebGuard](https://gitlab.com/marcelbreuer/webguard) project.
+This project is a component of the [WebGuard](https://gitlab.com/m-breuer/webguard) project.
 
 ## Features
 
@@ -20,7 +20,7 @@ This project is a component of the [WebGuard](https://gitlab.com/marcelbreuer/we
     -   **Port Monitoring:** Checks if a specific TCP port is open.
     -   **SSL Certificate Monitoring:** Validates SSL certificates and manages incident states. This collected data is consumed by the Core application for display on dashboards, reporting, and triggering user notifications.
 -   **API-Driven:** Communicates with the core application via a REST API to send monitoring results.
--   **Redis Client:** Uses `predis/predis` as the Redis client library for PHP. For optimal performance, `phpredis` can be installed as a PHP extension.
+
 
 ## Project Structure
 
@@ -37,51 +37,46 @@ The project is structured as a standard Laravel application, with a few key comp
 
 ### Prerequisites
 
--   PHP 8.2 or higher
--   Composer
--   Redis server
--   A running instance of the [WebGuard Core](https://gitlab.com/marcelbreuer/webguard) application.
+-   Docker
+-   Docker Compose
+-   A running instance of the [WebGuard Core](https://gitlab.com/m-breuer/webguard) application.
 
 ### Installation
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://gitlab.com/marcelbreuer/webguard-instance.git
+    git clone https://gitlab.com/m-breuer/webguard-instance.git
     cd webguard-instance
     ```
-2.  **Install dependencies:**
-    ```bash
-    composer install
-    ```
-3.  **Configure Environment:**
+2.  **Configure Environment:**
     -   Copy `.env.example` to `.env`: `cp .env.example .env`
     -   Set the `WEBGUARD_LOCATION` variable to a unique identifier (e.g., `WEBGUARD_LOCATION="de-1"`). This is essential for the instance to pick up the correct jobs.
     -   Set the `WEBGUARD_CORE_API_URL` and `WEBGUARD_CORE_API_KEY` variables to connect to the core application.
-    -   Configure your Redis connection in the `.env` file. Ensure `REDIS_CLIENT` is set to `predis` or `phpredis` if the extension is installed.
-    -   Configure your database connection in the `.env` file. The application uses a database to store information about the monitoring jobs.
-4.  **Application Setup:**
-    ```bash
-    php artisan key:generate
-    php artisan migrate
-    ```
+    -   Configure your database connection in the `.env` file. The application uses a database to store information about the monitoring jobs. Ensure `DB_HOST` is set to `mysql`.
 5.  **Start Services:**
-    For local development, you need to run both the queue worker and the scheduler.
+    For local development, use the provided `start-dev.sh` script:
     ```bash
-    # Terminal 1: Queue Worker
-    php artisan queue:work --queue=default,monitoring-response,monitoring-ssl
-
-    # Terminal 2: Scheduler
-    php artisan schedule:work
+    ./start-dev.sh
+    ```
+    This command runs `docker compose -f compose.yml -f docker-compose.override.yml up -d`, which builds the `development` stage of the Dockerfile for the `php` service, mounts your local code, and sets `APP_ENV` to `local` inside the container.
+    To stop the services, run:
+    ```bash
+    docker compose -f compose.yml -f docker-compose.override.yml down
     ```
 
 ## Deployment
 
-For a production environment, it is crucial to use a queue worker to process queues and a cron job to run the scheduler.
+For production environments, you can build and run the production-ready Docker images using the `start-prod.sh` script.
 
-### Queue Worker
-
-To run the queue worker, use the `php artisan queue:work` command. You will need a process manager like Supervisor to keep the `php artisan queue:work` process running.
-
+To build and start the production services:
 ```bash
-php artisan queue:work --queue=default,monitoring-response,monitoring-ssl
+./start-prod.sh
 ```
+This command runs `docker compose up -d`, which builds the `production` stage of the Dockerfile for the `php` service.
+To stop the services, run:
+```bash
+docker compose down
+```
+
+
+
