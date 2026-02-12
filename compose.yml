@@ -38,7 +38,7 @@ services:
       PHP_UPLOAD_MAX_FILE_SIZE: "100M"
       PHP_MAX_EXECUTION_TIME: "3600"
       # Auto runs the Laravel scheduler on container start
-      AUTORUN_ENABLED: "false"
+      AUTORUN_ENABLED: "true"
     command: php artisan schedule:work --verbose --no-interaction
     # Gracefully stop the container on SIGTERM
     stop_signal: SIGTERM
@@ -62,7 +62,7 @@ services:
       PHP_UPLOAD_MAX_FILE_SIZE: "100M"
       PHP_MAX_EXECUTION_TIME: "3600"
       # Auto runs the Laravel queue worker on container start
-      AUTORUN_ENABLED: "false"
+      AUTORUN_ENABLED: "true"
     command: php artisan queue:work --queue=default --sleep=1 --tries=1 --max-time=3600
     # Gracefully stop the container on SIGTERM
     stop_signal: SIGTERM
@@ -86,7 +86,7 @@ services:
       PHP_UPLOAD_MAX_FILE_SIZE: "100M"
       PHP_MAX_EXECUTION_TIME: "3600"
       # Auto runs the Laravel queue worker on container start
-      AUTORUN_ENABLED: "false"
+      AUTORUN_ENABLED: "true"
     command: php artisan queue:work --queue=monitoring-response --sleep=1 --tries=1 --max-time=3600
     # Gracefully stop the container on SIGTERM
     stop_signal: SIGTERM
@@ -110,7 +110,7 @@ services:
       PHP_UPLOAD_MAX_FILE_SIZE: "100M"
       PHP_MAX_EXECUTION_TIME: "3600"
       # Auto runs the Laravel queue worker on container start
-      AUTORUN_ENABLED: "false"
+      AUTORUN_ENABLED: "true"
     command: php artisan queue:work --queue=monitoring-ssl --sleep=1 --tries=1 --max-time=3600
     # Gracefully stop the container on SIGTERM
     stop_signal: SIGTERM
