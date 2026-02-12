@@ -14,13 +14,13 @@ services:
 
   # Override for local queue handling: only one worker for all queues
   queue-default:
-    command: true # Disable default queue worker
+    command: null # Disable default queue worker
 
   queue-monitoring-response:
-    command: true # Disable monitoring-response queue worker
+    command: null # Disable monitoring-response queue worker
 
   queue-monitoring-ssl:
-    command: true # Disable monitoring-ssl queue worker
+    command: null # Disable monitoring-ssl queue worker
 
   queue-local:
     build:
