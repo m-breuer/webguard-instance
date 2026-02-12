@@ -1,5 +1,5 @@
 #!/bin/bash
 
 echo "Starting local development environment..."
-docker compose -f compose.yml -f docker-compose.override.yml up -d
+USER_ID=$(id -u) GROUP_ID=$(id -g) docker compose -f compose.yml -f docker-compose.override.yml up -d --build
 echo "Local development environment started."
