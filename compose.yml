@@ -58,8 +58,6 @@ services:
     build:
       context: .
       target: worker
-    deploy:
-      replicas: 1
     environment:
       # PHP configuration settings for the queue worker
       PHP_MEMORY_LIMIT: "2048M"
@@ -84,8 +82,6 @@ services:
     build:
       context: .
       target: worker
-    deploy:
-      replicas: 4
     environment:
       # PHP configuration settings for the queue worker
       PHP_MEMORY_LIMIT: "2048M"
@@ -110,8 +106,6 @@ services:
     build:
       context: .
       target: worker
-    deploy:
-      replicas: 4
     environment:
       # PHP configuration settings for the queue worker
       PHP_MEMORY_LIMIT: "2048M"
