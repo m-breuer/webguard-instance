@@ -31,14 +31,14 @@ services:
         condition: service_healthy
 
   schedule:
-    image: serversideup/php:8.5-cli
+    image: serversideup/php:8.5-frankenphp
     environment:
       # PHP configuration settings for the schedule worker
       PHP_MEMORY_LIMIT: "2048M"
       PHP_UPLOAD_MAX_FILE_SIZE: "100M"
       PHP_MAX_EXECUTION_TIME: "3600"
       # Auto runs the Laravel scheduler on container start
-      AUTORUN_ENABLED: "true"
+      AUTORUN_ENABLED: "false"
     command: php artisan schedule:work --verbose --no-interaction
     # Gracefully stop the container on SIGTERM
     stop_signal: SIGTERM
@@ -51,18 +51,16 @@ services:
     healthcheck:
       test: ["CMD", "healthcheck-schedule"]
       start_period: 10s
-    volumes:
-      - ./:/var/www/html
 
   queue-default:
-    image: serversideup/php:8.5-cli
+    image: serversideup/php:8.5-frankenphp
     environment:
       # PHP configuration settings for the queue worker
       PHP_MEMORY_LIMIT: "2048M"
       PHP_UPLOAD_MAX_FILE_SIZE: "100M"
       PHP_MAX_EXECUTION_TIME: "3600"
       # Auto runs the Laravel queue worker on container start
-      AUTORUN_ENABLED: "true"
+      AUTORUN_ENABLED: "false"
     command: php artisan queue:work --queue=default --sleep=1 --tries=1 --max-time=3600
     # Gracefully stop the container on SIGTERM
     stop_signal: SIGTERM
@@ -75,18 +73,16 @@ services:
     healthcheck:
       test: ["CMD", "healthcheck-queue"]
       start_period: 10s
-    volumes:
-      - ./:/var/www/html
 
   queue-monitoring-response:
-    image: serversideup/php:8.5-cli
+    image: serversideup/php:8.5-frankenphp
     environment:
       # PHP configuration settings for the queue worker
       PHP_MEMORY_LIMIT: "2048M"
       PHP_UPLOAD_MAX_FILE_SIZE: "100M"
       PHP_MAX_EXECUTION_TIME: "3600"
       # Auto runs the Laravel queue worker on container start
-      AUTORUN_ENABLED: "true"
+      AUTORUN_ENABLED: "false"
     command: php artisan queue:work --queue=monitoring-response --sleep=1 --tries=1 --max-time=3600
     # Gracefully stop the container on SIGTERM
     stop_signal: SIGTERM
@@ -99,18 +95,16 @@ services:
     healthcheck:
       test: ["CMD", "healthcheck-queue"]
       start_period: 10s
-    volumes:
-      - ./:/var/www/html
 
   queue-monitoring-ssl:
-    image: serversideup/php:8.5-cli
+    image: serversideup/php:8.5-frankenphp
     environment:
       # PHP configuration settings for the queue worker
       PHP_MEMORY_LIMIT: "2048M"
       PHP_UPLOAD_MAX_FILE_SIZE: "100M"
       PHP_MAX_EXECUTION_TIME: "3600"
       # Auto runs the Laravel queue worker on container start
-      AUTORUN_ENABLED: "true"
+      AUTORUN_ENABLED: "false"
     command: php artisan queue:work --queue=monitoring-ssl --sleep=1 --tries=1 --max-time=3600
     # Gracefully stop the container on SIGTERM
     stop_signal: SIGTERM
@@ -123,8 +117,6 @@ services:
     healthcheck:
       test: ["CMD", "healthcheck-queue"]
       start_period: 10s
-    volumes:
-      - ./:/var/www/html
 
   mysql:
     image: mysql:8.0
