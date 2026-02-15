@@ -22,9 +22,9 @@ class SchedulingTest extends TestCase
         });
 
         $this->assertNotNull($responseEvent, 'Response monitoring command is not scheduled.');
-        $this->assertEquals('*/15 * * * *', $responseEvent->expression);
+        $this->assertEquals('*/5 * * * *', $responseEvent->expression);
 
         $this->assertNotNull($sslEvent, 'SSL monitoring command is not scheduled.');
-        $this->assertEquals('*/15 * * * *', $sslEvent->expression);
+        $this->assertEquals('*/5 * * * *', $sslEvent->expression);
     }
 }
