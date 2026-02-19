@@ -78,5 +78,14 @@ To stop the services, run:
 docker compose down
 ```
 
+### Coolify Queue Concurrency
+
+When deploying directly from `compose.yml` in Coolify, queue concurrency is configured through environment variables:
+
+- `QUEUE_DEFAULT_WORKERS` (default: `3`)
+- `QUEUE_MONITORING_RESPONSE_WORKERS` (default: `3`)
+- `QUEUE_MONITORING_SSL_WORKERS` (default: `2`)
+
+Each value controls how many `php artisan queue:work` processes run in parallel inside the corresponding queue container.
 
 
