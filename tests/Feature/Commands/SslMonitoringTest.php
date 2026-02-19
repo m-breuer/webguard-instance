@@ -28,8 +28,7 @@ class SslMonitoringTest extends TestCase
 
         $this->artisan('monitoring:ssl')
             ->expectsOutput('Dispatching SSL monitoring jobs...')
-            ->expectsOutput('Dispatched SSL monitoring: Test Monitoring')
-            ->expectsOutput('SSL monitoring jobs dispatched successfully.')
+            ->expectsOutput('SSL monitoring dispatch done. total=1 dispatched=1 skipped_maintenance=0')
             ->assertExitCode(0);
 
         Bus::assertDispatched(CrawlMonitoringSsl::class);
@@ -51,8 +50,7 @@ class SslMonitoringTest extends TestCase
 
         $this->artisan('monitoring:ssl')
             ->expectsOutput('Dispatching SSL monitoring jobs...')
-            ->expectsOutput('Skipping SSL monitoring due to active maintenance: Test Monitoring')
-            ->expectsOutput('SSL monitoring jobs dispatched successfully.')
+            ->expectsOutput('SSL monitoring dispatch done. total=1 dispatched=0 skipped_maintenance=1')
             ->assertExitCode(0);
 
         Bus::assertNotDispatched(CrawlMonitoringSsl::class);

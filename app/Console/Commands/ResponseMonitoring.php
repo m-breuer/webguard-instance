@@ -55,34 +55,34 @@ class ResponseMonitoring extends Command
             return Command::SUCCESS;
         }
 
-        $this->output->progressStart(count($monitorings));
+        $dispatched = 0;
+        $skippedMaintenance = 0;
 
         foreach ($monitorings as $monitoring) {
             $monitoring = (object) $monitoring;
 
-            $this->info('Processing monitoring: ' . $monitoring->name);
-
             if (isset($monitoring->maintenance_active) && $monitoring->maintenance_active) {
-                $this->info('Skipping response monitoring due to active maintenance: ' . $monitoring->name);
-
                 Http::withHeaders([
                     'X-API-KEY' => config('webguard.webguard_core_api_key'),
                 ])->post(config('webguard.webguard_core_api_url') . '/api/v1/internal/monitoring-responses', [
                     'monitoring_id' => $monitoring->id,
                     'status' => MonitoringStatus::UNKNOWN,
                 ]);
+
+                $skippedMaintenance++;
             } else {
-                $this->info('Dispatched response monitoring: ' . $monitoring->name);
-
                 dispatch(new CrawlMonitoringResponse($monitoring))->onQueue('monitoring-response');
-            }
 
-            $this->output->progressAdvance();
+                $dispatched++;
+            }
         }
 
-        $this->output->progressFinish();
-
-        $this->info('Response monitoring jobs dispatched successfully.');
+        $this->info(sprintf(
+            'Response monitoring dispatch done. total=%d dispatched=%d skipped_maintenance=%d',
+            count($monitorings),
+            $dispatched,
+            $skippedMaintenance,
+        ));
 
         return Command::SUCCESS;
     }

@@ -60,25 +60,27 @@ class SslMonitoring extends Command
             return Command::SUCCESS;
         }
 
-        $this->output->progressStart(count($monitorings));
+        $dispatched = 0;
+        $skippedMaintenance = 0;
 
         foreach ($monitorings as $monitoring) {
             $monitoring = (object) $monitoring;
 
             if (isset($monitoring->maintenance_active) && $monitoring->maintenance_active) {
-                $this->info('Skipping SSL monitoring due to active maintenance: ' . $monitoring->name);
+                $skippedMaintenance++;
             } else {
-                $this->info('Dispatched SSL monitoring: ' . $monitoring->name);
-
                 dispatch(new CrawlMonitoringSsl($monitoring))->onQueue('monitoring-ssl');
-            }
 
-            $this->output->progressAdvance();
+                $dispatched++;
+            }
         }
 
-        $this->output->progressFinish();
-
-        $this->info('SSL monitoring jobs dispatched successfully.');
+        $this->info(sprintf(
+            'SSL monitoring dispatch done. total=%d dispatched=%d skipped_maintenance=%d',
+            count($monitorings),
+            $dispatched,
+            $skippedMaintenance,
+        ));
 
         return Command::SUCCESS;
     }
