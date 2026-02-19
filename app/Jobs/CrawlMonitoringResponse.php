@@ -205,9 +205,13 @@ class CrawlMonitoringResponse implements ShouldQueue
     private function performHttpRequest(): ?Response
     {
         try {
-            $request = Http::timeout($this->monitoring->timeout)
-                ->retry(2, 500)
-                ->withoutVerifying();
+            $request = Http::timeout($this->monitoring->timeout)->withoutVerifying();
+
+            $retryTimes = max(0, (int) config('webguard.http_retry_times', 1));
+            $retryDelayMs = max(0, (int) config('webguard.http_retry_delay_ms', 250));
+            if ($retryTimes > 0) {
+                $request = $request->retry($retryTimes, $retryDelayMs);
+            }
 
             if ($this->monitoring->auth_username && $this->monitoring->auth_password) {
                 $request = $request->withBasicAuth($this->monitoring->auth_username, $this->monitoring->auth_password);

@@ -39,6 +39,7 @@ services:
       PHP_MEMORY_LIMIT: "2048M"
       PHP_UPLOAD_MAX_FILE_SIZE: "100M"
       PHP_MAX_EXECUTION_TIME: "3600"
+      PHP_OPCACHE_ENABLE: "1"
       # Auto runs the Laravel scheduler on container start
       AUTORUN_ENABLED: "false"
     command: php artisan schedule:work --verbose --no-interaction
@@ -63,6 +64,7 @@ services:
       PHP_MEMORY_LIMIT: "2048M"
       PHP_UPLOAD_MAX_FILE_SIZE: "100M"
       PHP_MAX_EXECUTION_TIME: "3600"
+      PHP_OPCACHE_ENABLE: "1"
       # Auto runs the Laravel queue worker on container start
       AUTORUN_ENABLED: "false"
     command:
@@ -98,6 +100,7 @@ services:
       PHP_MEMORY_LIMIT: "2048M"
       PHP_UPLOAD_MAX_FILE_SIZE: "100M"
       PHP_MAX_EXECUTION_TIME: "3600"
+      PHP_OPCACHE_ENABLE: "1"
       # Auto runs the Laravel queue worker on container start
       AUTORUN_ENABLED: "false"
     command:
@@ -133,6 +136,7 @@ services:
       PHP_MEMORY_LIMIT: "2048M"
       PHP_UPLOAD_MAX_FILE_SIZE: "100M"
       PHP_MAX_EXECUTION_TIME: "3600"
+      PHP_OPCACHE_ENABLE: "1"
       # Auto runs the Laravel queue worker on container start
       AUTORUN_ENABLED: "false"
     command:
