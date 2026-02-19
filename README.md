@@ -78,9 +78,9 @@ To stop the services, run:
 docker compose down
 ```
 
-### Coolify Queue Concurrency
+### Production Environment Tuning
 
-When deploying directly from `compose.yml` in Coolify, queue concurrency is configured through environment variables:
+For any production deployment using `compose.yml`, tune queue concurrency via `.env`:
 
 - `QUEUE_DEFAULT_WORKERS` (default: `3`)
 - `QUEUE_MONITORING_RESPONSE_WORKERS` (default: `3`)
@@ -88,4 +88,11 @@ When deploying directly from `compose.yml` in Coolify, queue concurrency is conf
 
 Each value controls how many `php artisan queue:work` processes run in parallel inside the corresponding queue container.
 
+For WebGuard integration and HTTP behavior, adjust these `.env` variables as needed:
+
+- `WEBGUARD_LOCATION`
+- `WEBGUARD_CORE_API_KEY`
+- `WEBGUARD_CORE_API_URL`
+- `WEBGUARD_HTTP_RETRY_TIMES` (default: `1`)
+- `WEBGUARD_HTTP_RETRY_DELAY_MS` (default: `250`)
 
