@@ -31,8 +31,7 @@ class ResponseMonitoringTest extends TestCase
 
         $this->artisan('monitoring:response')
             ->expectsOutput('Dispatching response monitoring jobs...')
-            ->expectsOutput('Dispatched response monitoring: Test Monitoring')
-            ->expectsOutput('Response monitoring jobs dispatched successfully.')
+            ->expectsOutput('Response monitoring dispatch done. total=1 dispatched=1 skipped_maintenance=0')
             ->assertExitCode(0);
 
         Bus::assertDispatched(CrawlMonitoringResponse::class);
@@ -57,8 +56,7 @@ class ResponseMonitoringTest extends TestCase
 
         $this->artisan('monitoring:response')
             ->expectsOutput('Dispatching response monitoring jobs...')
-            ->expectsOutput('Skipping response monitoring due to active maintenance: Test Monitoring')
-            ->expectsOutput('Response monitoring jobs dispatched successfully.')
+            ->expectsOutput('Response monitoring dispatch done. total=1 dispatched=0 skipped_maintenance=1')
             ->assertExitCode(0);
 
         Http::assertSent(function ($request) {
